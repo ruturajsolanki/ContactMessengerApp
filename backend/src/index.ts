@@ -35,6 +35,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
+// Add a friendly root route
+app.get('/', (req, res) => {
+  res.send('Contact Message Manager Backend is running!');
+});
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
