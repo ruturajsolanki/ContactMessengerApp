@@ -49,23 +49,18 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { password } = req.body;
 
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    // For admin login, we'll use a hardcoded admin user
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    
+    if (password !== adminPassword) {
+      return res.status(401).json({ message: 'Invalid password' });
     }
 
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    // Create JWT token
+    // Create JWT token for admin
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { role: 'admin' },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '1d' }
     );
@@ -73,10 +68,8 @@ export const login = async (req: Request, res: Response) => {
     return res.json({
       token,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+        role: 'admin'
+      }
     });
   } catch (error) {
     console.error('Error in login:', error);

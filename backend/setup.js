@@ -18,12 +18,12 @@ const questions = [
   {
     name: 'MONGODB_URI',
     message: 'Enter MongoDB URI: ',
-    default: 'your_mongodb_uri_here'
+    default: 'mongodb+srv://demonsaint5678:fT5QE5fBritoF9rs@cluster0.4q6pezk.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0'
   },
   {
     name: 'JWT_SECRET',
-    message: 'Enter JWT secret (default: your_jwt_secret): ',
-    default: 'your_jwt_secret'
+    message: 'Enter JWT secret (default: your_super_secret_jwt_key_change_this_in_production): ',
+    default: 'your_super_secret_jwt_key_change_this_in_production'
   },
   {
     name: 'ADMIN_PASSWORD',
@@ -32,13 +32,13 @@ const questions = [
   },
   {
     name: 'SMTP_USER',
-    message: 'Enter SMTP user email (default: your_email@example.com): ',
-    default: 'your_email@example.com'
+    message: 'Enter SMTP user email (default: demonemperor675@gmail.com): ',
+    default: 'demonemperor675@gmail.com'
   },
   {
     name: 'SMTP_PASS',
-    message: 'Enter SMTP password (default: your_smtp_password): ',
-    default: 'your_smtp_password'
+    message: 'Enter SMTP password (default: puap lkpi ilti rmuo): ',
+    default: 'puap lkpi ilti rmuo'
   }
 ];
 

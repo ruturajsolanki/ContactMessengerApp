@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Message from '../models/Message';
 import { AppError } from '../middleware/errorHandler';
-import { sendEmail, sendNewMessageNotification, sendReplyNotification } from '../utils/email';
+import { sendEmail, sendNewMessageNotification } from '../utils/email';
 
 export const createMessage = async (
   req: Request,
@@ -39,7 +39,37 @@ export const getMessages = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const messages = await Message.find().sort({ createdAt: -1 });
+    const { searchTerm, isRead, startDate, endDate } = req.query;
+    
+    // Build query object
+    const query: any = {};
+    
+    // Add search term if provided
+    if (searchTerm) {
+      query.$or = [
+        { subject: { $regex: searchTerm, $options: 'i' } },
+        { message: { $regex: searchTerm, $options: 'i' } },
+        { name: { $regex: searchTerm, $options: 'i' } },
+        { email: { $regex: searchTerm, $options: 'i' } }
+      ];
+    }
+    
+    // Add read status filter if provided
+    if (isRead !== undefined) {
+      query.isRead = isRead === 'true';
+    }
+    
+    // Add date range filters if provided
+    if (startDate) {
+      query.createdAt = { ...query.createdAt, $gte: new Date(startDate as string) };
+    }
+    if (endDate) {
+      query.createdAt = { ...query.createdAt, $lte: new Date(endDate as string) };
+    }
+    
+    console.log('Query:', query); // Debug log
+    
+    const messages = await Message.find(query).sort({ createdAt: -1 });
     res.json({ messages });
   } catch (error) {
     console.error('Error fetching messages:', error);

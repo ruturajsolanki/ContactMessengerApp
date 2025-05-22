@@ -18,11 +18,22 @@ import authRoutes from './routes/authRoutes';
 
 const app = express();
 
+// CORS configuration
+app.use(cors({
+  origin: '*', // Allow all origins in development
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 // Middleware
-app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
+
+// Basic route for testing
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Server is running' });
+});
 
 // Rate limiting
 const limiter = rateLimit({
@@ -49,8 +60,10 @@ mongoose.connect(mongoUri)
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
+      console.log(`API Documentation available at http://localhost:${port}/api-docs`);
     });
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error);
+    process.exit(1);
   }); 

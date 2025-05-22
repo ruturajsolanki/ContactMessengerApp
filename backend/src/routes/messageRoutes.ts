@@ -12,25 +12,16 @@ import {
 
 const router = express.Router();
 
-// Create a new message (no auth required)
+// Public route for creating messages
 router.post('/', createMessage);
 
-// Get sent messages (messages with replies)
-router.get('/sent', authenticateToken, getSentMessages);
-
-// Get all messages
-router.get('/', authenticateToken, getMessages);
-
-// Get a single message
-router.get('/:id', authenticateToken, getMessageById);
-
-// Update a message
-router.put('/:id', authenticateToken, updateMessage);
-
-// Delete a message
-router.delete('/:id', authenticateToken, deleteMessage);
-
-// Send a reply
-router.post('/:id/reply', authenticateToken, sendReply);
+// Protected routes
+router.use(authenticateToken);
+router.get('/', getMessages);
+router.get('/sent', getSentMessages);
+router.get('/:id', getMessageById);
+router.patch('/:id', updateMessage);
+router.delete('/:id', deleteMessage);
+router.post('/:id/reply', sendReply);
 
 export default router; 
