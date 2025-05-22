@@ -1,0 +1,148 @@
+import { Request, Response, NextFunction } from 'express';
+import Message from '../models/Message';
+import { AppError } from '../middleware/errorHandler';
+import { sendEmail, sendNewMessageNotification, sendReplyNotification } from '../utils/email';
+
+export const createMessage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    const newMessage = await Message.create({
+      name,
+      email,
+      subject,
+      message
+    });
+
+    // Send notification email
+    try {
+      await sendNewMessageNotification(newMessage);
+    } catch (emailError) {
+      console.error('Error sending notification email:', emailError);
+      // Don't fail the request if email fails
+    }
+
+    res.status(201).json({ success: true, message: newMessage });
+  } catch (error) {
+    console.error('Error creating message:', error);
+    res.status(500).json({ success: false, message: 'Error creating message' });
+  }
+};
+
+export const getMessages = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const messages = await Message.find().sort({ createdAt: -1 });
+    res.json({ messages });
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ message: 'Error fetching messages' });
+  }
+};
+
+export const getSentMessages = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const messages = await Message.find({ reply: { $exists: true, $ne: null } })
+      .sort({ repliedAt: -1 });
+    res.json({ messages });
+  } catch (error) {
+    console.error('Error fetching sent messages:', error);
+    res.status(500).json({ message: 'Error fetching sent messages' });
+  }
+};
+
+export const getMessageById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const message = await Message.findById(req.params.id);
+    if (!message) {
+      res.status(404).json({ message: 'Message not found' });
+      return;
+    }
+    res.json({ message });
+  } catch (error) {
+    console.error('Error fetching message:', error);
+    res.status(500).json({ message: 'Error fetching message' });
+  }
+};
+
+export const updateMessage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { isRead } = req.body;
+    const message = await Message.findByIdAndUpdate(
+      req.params.id,
+      { isRead },
+      { new: true }
+    );
+    if (!message) {
+      res.status(404).json({ message: 'Message not found' });
+      return;
+    }
+    res.json({ message });
+  } catch (error) {
+    console.error('Error updating message:', error);
+    res.status(500).json({ message: 'Error updating message' });
+  }
+};
+
+export const deleteMessage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const message = await Message.findByIdAndDelete(req.params.id);
+    if (!message) {
+      res.status(404).json({ message: 'Message not found' });
+      return;
+    }
+    res.json({ message: 'Message deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting message:', error);
+    res.status(500).json({ message: 'Error deleting message' });
+  }
+};
+
+export const sendReply = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { reply } = req.body;
+    const message = await Message.findByIdAndUpdate(
+      req.params.id,
+      {
+        reply,
+        repliedAt: new Date(),
+      },
+      { new: true }
+    );
+    if (!message) {
+      res.status(404).json({ message: 'Message not found' });
+      return;
+    }
+    res.json({ message });
+  } catch (error) {
+    console.error('Error sending reply:', error);
+    res.status(500).json({ message: 'Error sending reply' });
+  }
+}; 
