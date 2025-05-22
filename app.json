@@ -4,6 +4,9 @@
       "eas": {
         "projectId": "daea7223-2e85-4f13-8694-8430d48af2a1"
       }
+    },
+    "android": {
+      "package": "com.ruturajsolanki43.contactformapp"
     }
   }
 }
