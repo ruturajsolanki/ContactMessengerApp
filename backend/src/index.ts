@@ -18,6 +18,8 @@ import authRoutes from './routes/authRoutes';
 
 const app = express();
 
+app.set('trust proxy', 1); // trust first proxy for correct client IP on Render
+
 // CORS configuration
 app.use(cors({
   origin: '*', // Allow all origins in development
