@@ -161,6 +161,7 @@ export const sendReply = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    console.log('Received sendReply request body:', req.body);
     const { reply } = req.body;
     const message = await Message.findByIdAndUpdate(
       req.params.id,
