@@ -4,13 +4,16 @@ import { IMessage } from '../models/Message';
 interface EmailOptions {
   to: string;
   subject: string;
-  text: string;
+  text?: string;
+  html?: string;
 }
 
 export const sendEmail = async (options: EmailOptions) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com', // Gmail SMTP host
+      port: 465, // Secure port for Gmail
+      secure: true, // Use SSL/TLS
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
@@ -21,7 +24,8 @@ export const sendEmail = async (options: EmailOptions) => {
       from: process.env.SMTP_USER,
       to: options.to,
       subject: options.subject,
-      text: options.text
+      text: options.text,
+      html: options.html
     };
 
     await transporter.sendMail(mailOptions);
