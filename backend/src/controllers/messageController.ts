@@ -83,8 +83,12 @@ export const getSentMessages = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const messages = await Message.find({ reply: { $exists: true, $ne: null } })
+    console.log('Executing getSentMessages query...');
+    const query = { reply: { $exists: true, $ne: null } };
+    console.log('Sent messages query:', query);
+    const messages = await Message.find(query)
       .sort({ repliedAt: -1 });
+    console.log('Found', messages.length, 'sent messages.');
     res.json({ messages });
   } catch (error) {
     console.error('Error fetching sent messages:', error);
