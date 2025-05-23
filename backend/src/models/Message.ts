@@ -7,6 +7,8 @@ export interface IMessage {
   message: string;
   isRead: boolean;
   createdAt: Date;
+  reply?: string;
+  repliedAt?: Date;
 }
 
 const messageSchema = new mongoose.Schema<IMessage>({
@@ -38,6 +40,13 @@ const messageSchema = new mongoose.Schema<IMessage>({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  reply: {
+    type: String,
+    trim: true,
+  },
+  repliedAt: {
+    type: Date,
   }
 }, { collection: 'contactmessages' });
 
