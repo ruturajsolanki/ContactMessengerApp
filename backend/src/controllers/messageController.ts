@@ -170,6 +170,7 @@ export const sendReply = async (
       },
       { new: true }
     );
+    console.log('Updated message after sending reply:', message);
     if (!message) {
       res.status(404).json({ message: 'Message not found' });
       return;
