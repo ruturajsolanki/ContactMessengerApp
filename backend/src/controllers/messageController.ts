@@ -181,10 +181,23 @@ export const sendReply = async (
     // Send email notification to the original sender
     if (message.email) {
       try {
+        const emailBody = `
+          <h2>Your message has been replied to</h2>
+          <p><b>Original Message:</b></p>
+          <p><b>From:</b> ${message.name} (${message.email})</p>
+          <p><b>Subject:</b> ${message.subject}</p>
+          <p><b>Message:</b></p>
+          <p>${message.message}</p>
+          <br/>
+          <p><b>Reply:</b></p>
+          <p>${reply}</p>
+        `;
+
         await sendEmail({
           to: message.email,
           subject: `Reply to your message: ${message.subject}`,
-          text: `Your message has been replied to:\n\n${reply}`,
+          html: emailBody, // Send as HTML
+          text: `Your message has been replied to. Check the app for details.` // Provide a text alternative
         });
         console.log('Reply email sent to', message.email);
       } catch (emailError) {
