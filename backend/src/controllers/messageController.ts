@@ -172,10 +172,27 @@ export const sendReply = async (
       { new: true }
     );
     console.log('Updated message after sending reply:', message);
+
     if (!message) {
       res.status(404).json({ message: 'Message not found' });
       return;
     }
+
+    // Send email notification to the original sender
+    if (message.email) {
+      try {
+        await sendEmail({
+          to: message.email,
+          subject: `Reply to your message: ${message.subject}`,
+          text: `Your message has been replied to:\n\n${reply}`,
+        });
+        console.log('Reply email sent to', message.email);
+      } catch (emailError) {
+        console.error('Error sending reply email:', emailError);
+        // Continue processing the request even if email fails
+      }
+    }
+
     res.json({ message });
   } catch (error) {
     console.error('Error sending reply:', error);
