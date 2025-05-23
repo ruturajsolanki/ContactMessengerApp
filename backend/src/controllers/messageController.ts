@@ -181,6 +181,7 @@ export const sendReply = async (
     // Send email notification to the original sender
     if (message.email) {
       try {
+        console.log('Constructing email body with message:', message, 'and reply:', reply);
         const emailBody = `
           <h2>Your message has been replied to</h2>
           <p><b>Original Message:</b></p>
