@@ -182,17 +182,7 @@ export const sendReply = async (
     if (message.email) {
       try {
         console.log('Constructing email body with message:', message, 'and reply:', reply);
-        const emailBody = `
-          <h2>Your message has been replied to</h2>
-          <p><b>Original Message:</b></p>
-          <p><b>From:</b> ${message.name} (${message.email})</p>
-          <p><b>Subject:</b> ${message.subject}</p>
-          <p><b>Message:</b></p>
-          <p>${message.message}</p>
-          <br/>
-          <p><b>Reply:</b></p>
-          <p>${reply}</p>
-        `;
+        const emailBody = `<p>Reply: ${reply}</p>`; // Simplified HTML body
 
         await sendEmail({
           to: message.email,
