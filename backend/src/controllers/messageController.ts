@@ -197,7 +197,7 @@ export const sendReply = async (
           to: message.email,
           subject: `Reply to your message: ${message.subject}`,
           html: emailBody, // Send as HTML
-          text: `Your message has been replied to. Check the app for details.` // Provide a text alternative
+          // text: `Your message has been replied to. Check the app for details.` // Remove or comment out the text field
         });
         console.log('Reply email sent to', message.email);
       } catch (emailError) {
